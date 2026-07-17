@@ -1,17 +1,65 @@
 ---
 import { certifications } from "../../data/certifications";
+import SeoHead from "../../components/SeoHead.astro";
 import TerminalTextReveal from "../../components/TerminalTextReveal.astro";
 import { ClientRouter } from "astro:transitions";
+
+const seoDescription = "View verified AI engineering, frontend development, API, Python, TypeScript, and C# certifications earned by Dilukshan Niranjan.";
+const structuredData = {
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@type": "CollectionPage",
+			"@id": "https://dilukshan.dev/certifications/#webpage",
+			url: "https://dilukshan.dev/certifications/",
+			name: "Developer & AI Certifications | Dilukshan Niranjan",
+			description: seoDescription,
+			inLanguage: "en",
+			about: { "@id": "https://dilukshan.dev/#person" },
+			mainEntity: {
+				"@type": "ItemList",
+				itemListElement: certifications.map((certification, index) => ({
+					"@type": "ListItem",
+					position: index + 1,
+					item: {
+						"@type": "EducationalOccupationalCredential",
+						name: certification.title,
+						description: `${certification.title}, issued by ${certification.issuer}.`,
+						url: certification.verificationUrl,
+						credentialCategory: "Professional certificate",
+						recognizedBy: { "@type": "Organization", name: certification.issuer },
+						identifier: {
+							"@type": "PropertyValue",
+							propertyID: "Credential ID",
+							value: certification.credentialId,
+						},
+						competencyRequired: certification.skills,
+					},
+				})),
+			},
+		},
+		{
+			"@type": "BreadcrumbList",
+			itemListElement: [
+				{ "@type": "ListItem", position: 1, name: "Home", item: "https://dilukshan.dev/" },
+				{ "@type": "ListItem", position: 2, name: "Certifications", item: "https://dilukshan.dev/certifications/" },
+			],
+		},
+	],
+};
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content="Verified certifications earned by Dilukshan Niranjan." />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<title>Certifications — Dilukshan Niranjan</title>
+		<SeoHead
+			title="Developer & AI Certifications | Dilukshan Niranjan"
+			description={seoDescription}
+			pathname="/certifications/"
+			image="/certifications/datacamp-ai-eng.jpg"
+			imageAlt="AI engineering certification earned by Dilukshan Niranjan"
+			structuredData={structuredData}
+		/>
 		<ClientRouter />
 	</head>
 	<body>
@@ -30,7 +78,7 @@ import { ClientRouter } from "astro:transitions";
 			<main>
 				<section class="intro">
 					<p class="section-kicker">01 / Credentials</p>
-					<div class="intro-grid"><h1>Proof of<br />progress.</h1><p>A living record of the courses, specializations, and practical skills I’ve completed across AI engineering, frontend development, programming, and APIs.</p></div>
+					<div class="intro-grid"><h1>Developer &amp; AI<br />certifications.</h1><p>A living record of the courses, specializations, and practical skills I’ve completed across AI engineering, frontend development, programming, and APIs.</p></div>
 				</section>
 
 				<section class="certifications" aria-label="Verified certifications">

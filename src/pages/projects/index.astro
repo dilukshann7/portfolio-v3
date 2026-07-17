@@ -1,17 +1,53 @@
 ---
 import { projects } from "../../data/projects";
+import SeoHead from "../../components/SeoHead.astro";
 import TerminalTextReveal from "../../components/TerminalTextReveal.astro";
 import { ClientRouter } from "astro:transitions";
+
+const seoDescription = "Explore full-stack, AI, SaaS, developer tooling, and UI engineering projects built by Dilukshan Niranjan, with case studies, stacks, and live links.";
+const structuredData = {
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@type": "CollectionPage",
+			"@id": "https://dilukshan.dev/projects/#webpage",
+			url: "https://dilukshan.dev/projects/",
+			name: "Software Projects & Case Studies | Dilukshan Niranjan",
+			description: seoDescription,
+			inLanguage: "en",
+			about: { "@id": "https://dilukshan.dev/#person" },
+			mainEntity: {
+				"@type": "ItemList",
+				itemListElement: projects.map((project, index) => ({
+					"@type": "ListItem",
+					position: index + 1,
+					name: project.name,
+					url: `https://dilukshan.dev/projects/${project.slug}/`,
+				})),
+			},
+		},
+		{
+			"@type": "BreadcrumbList",
+			itemListElement: [
+				{ "@type": "ListItem", position: 1, name: "Home", item: "https://dilukshan.dev/" },
+				{ "@type": "ListItem", position: 2, name: "Projects", item: "https://dilukshan.dev/projects/" },
+			],
+		},
+	],
+};
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content="Selected projects by Dilukshan Niranjan." />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<title>Projects — Dilukshan Niranjan</title>
+		<SeoHead
+			title="Software Projects & Case Studies | Dilukshan Niranjan"
+			description={seoDescription}
+			pathname="/projects/"
+			image="/projects/noxhdui.jpg"
+			imageAlt="A selection of software projects by Dilukshan Niranjan"
+			structuredData={structuredData}
+		/>
 		<ClientRouter />
 	</head>
 	<body>
@@ -30,7 +66,7 @@ import { ClientRouter } from "astro:transitions";
 			<main>
 				<section class="intro">
 					<p class="section-kicker">01 / Selected work</p>
-					<div class="intro-grid"><h1>Things I’ve<br />built.</h1><p>I build AI-assisted products, internal tools, and focused interfaces. I care about how they work and how they feel to use.</p></div>
+					<div class="intro-grid"><h1>Software projects<br />&amp; case studies.</h1><p>I build AI-assisted products, internal tools, and focused interfaces. I care about how they work and how they feel to use.</p></div>
 				</section>
 
 				<section class="project-list" aria-label="Project list">
@@ -57,7 +93,7 @@ import { ClientRouter } from "astro:transitions";
 									</div>
 								</div>
 								<a class="row-arrow" href={`/projects/${project.slug}/`} aria-label={`View ${project.name} case study`}>↗</a>
-								<span class="project-hover-preview" aria-hidden="true"><img src={project.image} alt="" loading="lazy" /></span>
+								<span class="project-hover-preview" aria-hidden="true"><img src={project.image} alt="" width="1920" height="1279" loading="lazy" decoding="async" /></span>
 							</article>
 						);
 					})}
