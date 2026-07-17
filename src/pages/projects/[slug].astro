@@ -121,10 +121,11 @@ const otherProjects = projects.filter((item) => item.slug !== project.slug).slic
 	.highlight-list li { position: relative; padding-left: 16px; color: #77776f; font-size: 14px; line-height: 1.4; }
 	.highlight-list li::before { content: '↗'; position: absolute; left: 0; color: #111; }
 	.stack-label { margin-top: 26px; }
-	.stack-list { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 14px; }
-	.stack-item { width: max-content; max-width: 100%; min-height: 38px; padding: 6px 11px 6px 6px; display: inline-flex; flex: 0 0 auto; align-items: center; gap: 8px; overflow: hidden; border: 1px solid #deded7; border-radius: 999px; color: #66665f; background: #fafaf7; font-size: 12px; line-height: 1; }
-	.stack-icon { width: 25px; height: 25px; min-width: 25px; max-width: 25px; min-height: 25px; max-height: 25px; padding: 5px; display: grid; place-items: center; flex: 0 0 25px; overflow: hidden; border: 1px solid #e5e5df; border-radius: 50%; background: #fff; }
-	.stack-icon img { width: 15px !important; height: 15px !important; min-width: 0; max-width: 15px; max-height: 15px; display: block; object-fit: contain; }
+	.stack-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; margin-top: 14px; border-top: 1px solid #deded7; }
+	.stack-item { width: 100%; min-width: 0; min-height: 48px; padding: 11px 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #deded7; color: #66665f; font-size: 12px; line-height: 1; transition: color .25s ease, transform .3s cubic-bezier(.22,.61,.36,1); }
+	.stack-item:hover { color: #111; transform: translateX(3px); }
+	.stack-icon { width: 22px; height: 22px; min-width: 22px; max-width: 22px; min-height: 22px; max-height: 22px; display: grid; place-items: center; flex: 0 0 22px; overflow: hidden; }
+	.stack-icon img { width: 20px !important; height: 20px !important; min-width: 0; max-width: 20px; max-height: 20px; display: block; object-fit: contain; }
 	.stack-name { display: block; white-space: nowrap; }
 	.text-link { display: inline-flex; align-items: center; gap: 18px; margin-top: 32px; padding-bottom: 9px; border-bottom: 1px solid #111; font-size: 14px; }
 	.more-projects { padding-top: 0; }
