@@ -1,0 +1,128 @@
+---
+import { projects } from "../../data/projects";
+import TerminalTextReveal from "../../components/TerminalTextReveal.astro";
+import { ClientRouter } from "astro:transitions";
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="description" content="Selected projects by Dilukshan Niranjan." />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>Projects — Dilukshan Niranjan</title>
+		<ClientRouter />
+	</head>
+	<body>
+		<div class="page-shell">
+			<header class="site-header">
+				<a class="wordmark" href="/" aria-label="Dilukshan Niranjan home">DN<span>.</span></a>
+				<nav aria-label="Primary navigation">
+					<a href="/#expertise">Expertise</a>
+					<a href="/projects/" aria-current="page">Projects</a>
+					<a href="/#certifications">Certifications</a>
+					<a href="/#contact">Contact</a>
+				</nav>
+				<a class="header-button dark" href="/#contact">＋</a>
+			</header>
+
+			<main>
+				<section class="intro">
+					<p class="section-kicker">01 / Selected work</p>
+					<div class="intro-grid"><h1>Things I’ve<br />built.</h1><p>AI-assisted products, internal tools, and focused interfaces built by a developer who cares about how the experience looks, feels, and works.</p></div>
+				</section>
+
+				<section class="project-list" aria-label="Project list">
+					{projects.map((project) => (
+						<a class="project-row" href={`/projects/${project.slug}/`}>
+							<div class="project-meta"><span>{project.year}</span><span>{project.status}</span></div>
+							<div><h2>{project.name}</h2><p class="system">{project.system}</p></div>
+							<p class="description">{project.description}</p>
+							<span class="row-arrow">↗</span>
+							<span class="project-hover-preview" aria-hidden="true"><img src={project.image} alt="" loading="lazy" /></span>
+						</a>
+					))}
+				</section>
+			</main>
+
+			<footer class="footer">
+				<div><p class="section-kicker">02 / Start a conversation</p><h2>Have something<br />in mind?</h2></div>
+				<div class="footer-contact"><a class="email-link" href="mailto:info@dilukshan.dev">info@dilukshan.dev <span>↗</span></a><div class="footer-links"><a href="https://www.pinterest.com/dilukshandev/" target="_blank" rel="noreferrer">Pinterest</a><a href="https://www.behance.net/Dilukshan/services" target="_blank" rel="noreferrer">Behance</a><a href="https://instagram.com/dilukshan.dev" target="_blank" rel="noreferrer">Instagram</a><a href="https://github.com/dilukshann7" target="_blank" rel="noreferrer">GitHub</a><a href="https://linkedin.com/in/dilukshann7" target="_blank" rel="noreferrer">LinkedIn</a><a href="https://x.com/dilukshann7" target="_blank" rel="noreferrer">X / Twitter</a></div></div>
+			</footer>
+		</div>
+		<TerminalTextReveal />
+	</body>
+</html>
+
+<style>
+	:root { --motion-ease: cubic-bezier(.22,.61,.36,1); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif; color: #111; background: #f7f7f3; font-synthesis: none; }
+	* { box-sizing: border-box; }
+	html { scroll-behavior: smooth; }
+	body { margin: 0; min-width: 320px; background: #f7f7f3; }
+	a { color: inherit; text-decoration: none; }
+	.page-shell { width: 100%; margin: 0; background: #f7f7f3; }
+	.site-header { position: sticky; top: 0; z-index: 10; min-height: 90px; padding: 0 6.5%; display: flex; align-items: center; justify-content: space-between; gap: 28px; background: rgba(255,255,255,.82); backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%); box-shadow: 0 10px 26px rgba(17,17,17,.035); }
+	.wordmark { font-size: 20px; font-weight: 600; letter-spacing: -.08em; }
+	.wordmark span { color: #70706b; }
+	nav { display: flex; align-items: center; gap: clamp(18px, 2.1vw, 34px); margin: 0 auto; }
+	nav a, .section-kicker, .project-meta { font-size: 12px; line-height: 1.35; }
+	nav a { color: #55554f; }
+	.header-button { min-width: 30px; padding: 8px 9px; border: 1px solid #111; border-radius: 7px; color: #fff; background: #111; font-size: 12px; text-align: center; }
+	.intro { padding: 134px 8.5% 108px; background: #fff; }
+	.section-kicker { margin: 0 0 20px; color: #8d8d85; text-transform: uppercase; letter-spacing: .08em; }
+	.intro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10%; align-items: end; }
+	h1, h2, h3, p { margin: 0; }
+	h1 { font-size: clamp(56px, 8vw, 116px); font-weight: 400; line-height: .9; letter-spacing: -.085em; }
+	.intro-grid > p { max-width: 480px; padding-bottom: 7px; color: #85857e; font-size: 17px; line-height: 1.6; }
+	.project-list { padding: 0 8.5% 118px; background: #f5f5f0; }
+	.project-row { position: relative; min-height: 132px; padding: 24px 0; display: grid; grid-template-columns: 16% 28% 1fr 30px; gap: 20px; align-items: center; border-top: 1px solid #dcdcd5; overflow: hidden; transform: translate3d(0, 0, 0); transition: transform .78s var(--motion-ease); }
+	.project-row:last-child { border-bottom: 1px solid #dcdcd5; }
+	.project-row::before { content: ""; position: absolute; left: 0; bottom: 0; z-index: 2; width: 100%; height: 2px; background: #111; transform: scaleX(0); transform-origin: left center; transition: transform .78s var(--motion-ease); }
+	.project-row::after { content: ""; position: absolute; inset: 0; z-index: 0; background: #ecece6; opacity: 0; transform: scale(.985); transition: opacity .42s ease, transform .72s var(--motion-ease); pointer-events: none; }
+	.project-row:hover { transform: translate3d(3px, 0, 0); }
+	.project-row:hover::before { transform: scaleX(1); }
+	.project-row:hover::after { opacity: 1; transform: scale(1); }
+	.project-row > *:not(.project-hover-preview) { position: relative; z-index: 1; transition: transform .72s var(--motion-ease), color .45s ease, opacity .45s ease; }
+	.project-row:hover .project-meta { color: #111; transform: translateX(4px); }
+	.project-row:hover h2 { transform: translateX(7px); }
+	.project-row:hover .description { color: #5f5f59; transform: translateX(4px); }
+	.project-row:hover .row-arrow { transform: translate3d(-3px, -2px, 0) rotate(-45deg) scale(1.12); }
+	.project-hover-preview { position: absolute; top: 50%; right: 70px; z-index: 2; width: 165px; height: 98px; overflow: hidden; border: 1px solid rgba(17,17,17,.12); border-radius: 8px; opacity: 0; pointer-events: none; will-change: transform, opacity; transform: translate3d(20px, -50%, 0) scale(.94); transition: opacity .48s ease .06s, transform .74s cubic-bezier(.4,0,.2,1); box-shadow: 0 12px 28px rgba(17,17,17,.12); }
+	.project-hover-preview img { width: 100%; height: 100%; display: block; object-fit: cover; transform: scale(1.045); transition: transform .78s cubic-bezier(.4,0,.2,1); }
+	.project-row:hover .project-hover-preview { opacity: 1; transform: translate3d(0, -50%, 0) scale(1); transition: opacity .42s ease, transform .82s var(--motion-ease); }
+	.project-row:hover .project-hover-preview img { transform: scale(1); transition: transform .82s var(--motion-ease); }
+	.project-row:active { transform: scale(.99); }
+	.project-meta { display: flex; flex-wrap: wrap; gap: 9px; color: #8b8b83; text-transform: uppercase; }
+	.project-meta span + span::before { content: '·'; margin-right: 9px; color: #b6b6ae; }
+	.project-row h2 { font-size: clamp(24px, 3vw, 42px); font-weight: 400; letter-spacing: -.07em; }
+	.system { margin-top: 7px; color: #989890; font-size: 13px; }
+	.description { max-width: 500px; color: #8c8c84; font-size: 15px; line-height: 1.5; }
+	.row-arrow { justify-self: end; font-size: 24px; }
+	.footer { min-height: 560px; padding: 142px 8.5% 104px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 10%; align-items: center; color: #fff; background: #111; }
+	.footer .section-kicker { color: #8e8e87; }
+	.footer h2 { max-width: 820px; font-size: clamp(46px, 6.5vw, 98px); font-weight: 400; line-height: .94; letter-spacing: -.085em; }
+	.footer-contact { align-self: center; }
+	.email-link { display: inline-flex; align-items: center; gap: 20px; padding-bottom: 13px; border-bottom: 1px solid #777; font-size: clamp(22px, 2vw, 30px); letter-spacing: -.05em; }
+	.email-link span { font-size: 17px; }
+	.footer-links { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 28px; color: #a2a29c; font-size: 15px; }
+	@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition-duration: .01ms !important; } .project-row:hover { transform: none; } .project-row:hover::before { transform: none; } .project-row:hover::after { opacity: 0; transform: none; } .project-row:hover .project-hover-preview { opacity: 0; transform: translate3d(20px, -50%, 0) scale(.94); } }
+	@media (prefers-reduced-transparency: reduce) { .site-header { background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 0 1px 0 #f0f0eb; } }
+	@media (max-width: 760px) {
+		.site-header { min-height: 72px; padding: 0 7%; }
+		nav { gap: 12px; }
+		nav a:nth-child(n+3) { display: none; }
+		.intro { padding: 86px 9% 78px; }
+		.intro-grid { grid-template-columns: 1fr; gap: 34px; }
+		.intro-grid > p { font-size: 16px; }
+		.project-list { padding: 0 9% 82px; }
+		.project-row { grid-template-columns: 1fr 26px; gap: 10px 16px; }
+		.project-hover-preview { right: 44px; width: 118px; height: 72px; }
+		.project-meta { grid-column: 1 / -1; }
+		.project-row h2, .description { grid-column: 1; }
+		.row-arrow { grid-column: 2; grid-row: 2 / span 2; }
+		.footer { grid-template-columns: 1fr; gap: 54px; min-height: 560px; padding: 112px 9% 84px; }
+		.footer-contact { align-self: start; }
+	}
+	@media (max-width: 500px) { nav { display: none; } .intro-grid h1 { font-size: clamp(56px, 17vw, 86px); } .project-row h2 { font-size: 28px; } }
+</style>
