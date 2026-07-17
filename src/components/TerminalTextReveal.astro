@@ -1,0 +1,350 @@
+<style is:global>
+	* { scrollbar-width: none; -ms-overflow-style: none; }
+	*::-webkit-scrollbar { display: none; width: 0; height: 0; }
+	.terminal-copy { display: inline; }
+	.terminal-word { display: inline-block; white-space: nowrap; }
+	.terminal-char { transition: color 165ms cubic-bezier(.22, 1, .36, 1); will-change: color; }
+	.page-shell {
+		opacity: 1;
+		filter: blur(0);
+		transition: opacity .52s cubic-bezier(.22, 1, .36, 1), transform .62s cubic-bezier(.22, 1, .36, 1), filter .52s cubic-bezier(.22, 1, .36, 1);
+		transform-origin: center top;
+		will-change: opacity, transform, filter;
+	}
+	body::after {
+		content: "";
+		position: fixed;
+		inset: 0;
+		z-index: 9999;
+		pointer-events: none;
+		opacity: 0;
+		background: rgba(127, 127, 127, 0);
+		backdrop-filter: blur(0);
+		-webkit-backdrop-filter: blur(0);
+		transition: opacity .46s ease, background .56s ease, backdrop-filter .56s cubic-bezier(.22, 1, .36, 1), -webkit-backdrop-filter .56s cubic-bezier(.22, 1, .36, 1);
+	}
+	html.is-page-leaving { cursor: progress; }
+	html.is-page-leaving .page-shell {
+		opacity: .42;
+		transform: scale(.99) translateY(4px);
+		filter: blur(4px);
+		pointer-events: none;
+		will-change: opacity, transform, filter;
+	}
+	html.is-page-leaving body::after { opacity: 1; background: rgba(127, 127, 127, .1); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+	html.is-page-returning .page-shell {
+		opacity: .42;
+		transform: scale(.99) translateY(4px);
+		filter: blur(4px);
+		transition: none;
+	}
+	html.is-page-returning body::after { opacity: 1; background: rgba(127, 127, 127, .1); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); transition: none; }
+
+	@keyframes page-native-out {
+		to { opacity: 0; filter: blur(20px); transform: scale(.992) translateY(-6px); }
+	}
+	@keyframes page-native-in {
+		from { opacity: .12; filter: blur(20px); transform: scale(.992) translateY(10px); }
+		to { opacity: 1; filter: blur(0); transform: scale(1) translateY(0); }
+	}
+	::view-transition-old(root) { animation: page-native-out .38s cubic-bezier(.4, 0, 1, 1) both; }
+	::view-transition-new(root) { animation: page-native-in .72s cubic-bezier(.16, 1, .3, 1) both; }
+	::view-transition-old(root), ::view-transition-new(root) { mix-blend-mode: normal; }
+
+	@media (prefers-reduced-motion: reduce) {
+		.terminal-char { color: inherit !important; transition: none !important; }
+		.page-shell { animation: none !important; transition: none !important; filter: none !important; }
+		body::after { display: none !important; }
+		html.is-page-leaving .page-shell, html.is-page-returning .page-shell { opacity: 1; transform: none; filter: none; }
+		::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
+	}
+</style>
+
+<script>
+	import Lenis from "lenis";
+	import "lenis/dist/lenis.css";
+	import type { TransitionBeforePreparationEvent } from "astro:transitions/client";
+
+	const terminalRevealSelector = [
+		"h1",
+		"h2",
+		"h3",
+		"p",
+		"li",
+		"a",
+		"button",
+		".project-meta",
+		".item-number",
+		".header-meta > span",
+		".credential-title",
+		".credential-issuer",
+		".credential-date",
+		".skills > span",
+		".stack-list > span",
+		".project-facts span",
+		".project-facts strong",
+		".hero-meta .meta-label",
+		".hero-meta strong",
+		".more-card > div > span",
+	].join(",");
+
+	const reduceTerminalMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+	if (!reduceTerminalMotion) {
+		const lenis = new Lenis({
+			autoRaf: true,
+			anchors: true,
+			duration: 1.3,
+			easing: (t: number) => 1 - Math.pow(1 - t, 4),
+			smoothWheel: true,
+			wheelMultiplier: 1,
+			touchMultiplier: 1.4,
+			stopInertiaOnNavigate: true,
+		});
+
+		type RevealState = {
+			element: HTMLElement;
+			chars: HTMLElement[];
+			finalColor: string;
+			initialColor: string;
+			accentColor: string;
+			lastProgress: number;
+			completed: boolean[];
+			timers: Array<number | undefined>;
+			alwaysComplete: boolean;
+		};
+		let activeBody: HTMLElement | null = null;
+		let cleanupTerminalReveal: (() => void) | undefined;
+
+		const setupTerminalReveal = () => {
+			if (activeBody === document.body) return;
+			cleanupTerminalReveal?.();
+			activeBody = document.body;
+
+		const candidates = Array.from(document.querySelectorAll<HTMLElement>(terminalRevealSelector));
+		const targets = candidates.filter((element) => {
+			if (element.closest("[data-no-text-reveal], .social-rail, .project-hover-preview, .issuer-logo")) return false;
+			if (!element.textContent?.trim()) return false;
+			if ((element.matches("a, button")) && element.querySelector("h1, h2, h3, p, li, summary")) return false;
+			return !candidates.some((candidate) => candidate !== element && candidate.contains(element) && !candidate.matches("a, button"));
+		});
+
+		const splitText = (element: HTMLElement) => {
+			const originalLabel = element.innerText.replace(/\s+/g, " ").trim();
+			if (!element.hasAttribute("aria-label") && originalLabel) element.setAttribute("aria-label", originalLabel);
+
+			const textNodes: Text[] = [];
+			const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
+				acceptNode(node) {
+					const parent = node.parentElement;
+					if (!parent || parent.closest("[data-no-text-reveal], .terminal-copy, .terminal-word")) return NodeFilter.FILTER_REJECT;
+					return node.textContent ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+				},
+			});
+
+			while (walker.nextNode()) textNodes.push(walker.currentNode as Text);
+
+			const chars: HTMLElement[] = [];
+			textNodes.forEach((node) => {
+				const content = node.textContent || "";
+				if (!content.trim()) return;
+
+				const copy = document.createElement("span");
+				copy.className = "terminal-copy";
+				copy.setAttribute("aria-hidden", "true");
+				const tokens = content.split(/(\s+)/);
+
+				tokens.forEach((token) => {
+					if (!token) return;
+					if (/^\s+$/.test(token)) {
+						copy.append(document.createTextNode(token));
+						return;
+					}
+
+					const word = document.createElement("span");
+					word.className = "terminal-word";
+					Array.from(token).forEach((character) => {
+						const char = document.createElement("span");
+						char.className = "terminal-char";
+						char.textContent = character;
+						word.append(char);
+						chars.push(char);
+					});
+					copy.append(word);
+				});
+
+				node.replaceWith(copy);
+			});
+
+			return chars;
+		};
+
+		const states: RevealState[] = targets.map((element) => {
+			const finalColor = getComputedStyle(element).color;
+			const isInFooter = Boolean(element.closest(".footer"));
+			const initialColor = isInFooter ? "#5c5c57" : "#c8c8c2";
+			const accentColor = isInFooter ? "#a2a29c" : "#85857e";
+			const chars = splitText(element);
+			chars.forEach((char) => { char.style.color = initialColor; });
+			return {
+				element,
+				chars,
+				finalColor,
+				initialColor,
+				accentColor,
+				lastProgress: 0,
+				completed: chars.map(() => false),
+				timers: chars.map(() => undefined),
+				alwaysComplete: false,
+			};
+		}).filter((state) => state.chars.length > 0);
+
+		const finishChar = (state: RevealState, index: number) => {
+			if (state.timers[index] !== undefined) window.clearTimeout(state.timers[index]);
+			state.timers[index] = window.setTimeout(() => {
+				if (!state.completed[index]) {
+					state.chars[index].style.color = state.finalColor;
+					state.completed[index] = true;
+				}
+				state.timers[index] = undefined;
+			}, 95);
+		};
+
+		const completeState = (state: RevealState) => {
+			state.chars.forEach((char, index) => {
+				if (state.timers[index] !== undefined) window.clearTimeout(state.timers[index]);
+				state.timers[index] = undefined;
+				state.completed[index] = true;
+				char.style.color = state.finalColor;
+			});
+			state.lastProgress = 1;
+		};
+
+		const updateState = (state: RevealState, progress: number) => {
+			const total = state.chars.length;
+			const currentIndex = Math.floor(progress * total);
+			const scrollingDown = progress >= state.lastProgress;
+
+			state.chars.forEach((char, index) => {
+				if (!scrollingDown && index >= currentIndex) {
+					if (state.timers[index] !== undefined) window.clearTimeout(state.timers[index]);
+					state.timers[index] = undefined;
+					state.completed[index] = false;
+					char.style.color = state.initialColor;
+					return;
+				}
+
+				if (state.completed[index]) return;
+				if (index <= currentIndex) {
+					char.style.color = state.accentColor;
+					if (state.timers[index] === undefined) finishChar(state, index);
+				} else {
+					char.style.color = state.initialColor;
+				}
+			});
+
+			state.lastProgress = progress;
+		};
+
+		let terminalFrame = 0;
+		const renderTerminalReveal = () => {
+			terminalFrame = 0;
+			const viewportHeight = window.innerHeight;
+			const atPageEnd = window.scrollY + viewportHeight >= document.documentElement.scrollHeight - 4;
+			states.forEach((state) => {
+				if (state.alwaysComplete) return;
+				if (atPageEnd && state.element.closest(".footer")) {
+					completeState(state);
+					return;
+				}
+				const rect = state.element.getBoundingClientRect();
+				if (rect.height === 0) return;
+				const progress = Math.max(0, Math.min(1, (viewportHeight * .92 - rect.top) / (viewportHeight * .3)));
+				if (progress === state.lastProgress && (progress === 0 || progress === 1)) return;
+				updateState(state, progress);
+			});
+		};
+
+		const requestTerminalReveal = () => {
+			if (!terminalFrame) terminalFrame = window.requestAnimationFrame(renderTerminalReveal);
+		};
+
+		if (window.scrollY <= 1) {
+			const viewportHeight = window.innerHeight;
+			states.forEach((state) => {
+				const rect = state.element.getBoundingClientRect();
+				if (rect.top < viewportHeight && rect.bottom > 0) {
+					state.alwaysComplete = true;
+					completeState(state);
+				}
+			});
+		}
+
+		lenis.on("scroll", requestTerminalReveal);
+		window.addEventListener("scroll", requestTerminalReveal, { passive: true });
+		window.addEventListener("resize", requestTerminalReveal, { passive: true });
+		requestTerminalReveal();
+
+			cleanupTerminalReveal = () => {
+				lenis.off("scroll", requestTerminalReveal);
+				window.removeEventListener("scroll", requestTerminalReveal);
+				window.removeEventListener("resize", requestTerminalReveal);
+				if (terminalFrame) window.cancelAnimationFrame(terminalFrame);
+				states.forEach((state) => {
+					state.timers.forEach((timer) => {
+						if (timer !== undefined) window.clearTimeout(timer);
+					});
+				});
+				activeBody = null;
+			};
+		};
+
+		let isPageLeaving = false;
+		const resetNavigationState = () => {
+			isPageLeaving = false;
+			lenis.start();
+			document.body.removeAttribute("aria-busy");
+			document.documentElement.classList.remove("is-page-leaving");
+		};
+
+		document.addEventListener("astro:before-preparation", (event) => {
+			const transitionEvent = event as TransitionBeforePreparationEvent;
+			const isSameDocument = transitionEvent.to.pathname === transitionEvent.from.pathname
+				&& transitionEvent.to.search === transitionEvent.from.search;
+			if (isSameDocument && transitionEvent.to.hash) return;
+			if (isPageLeaving) return;
+
+			const originalLoader = transitionEvent.loader;
+			isPageLeaving = true;
+			lenis.stop();
+			document.body.setAttribute("aria-busy", "true");
+			document.documentElement.classList.add("is-page-leaving");
+			transitionEvent.loader = async () => {
+				try {
+					await Promise.all([
+						originalLoader(),
+						new Promise<void>((resolve) => window.setTimeout(resolve, 460)),
+					]);
+				} catch (error) {
+					resetNavigationState();
+					throw error;
+				}
+			};
+		});
+
+		document.addEventListener("astro:after-swap", () => {
+			resetNavigationState();
+			setupTerminalReveal();
+			lenis.resize();
+		});
+
+		document.addEventListener("astro:page-load", () => {
+			resetNavigationState();
+			setupTerminalReveal();
+			lenis.resize();
+			lenis.scrollTo(window.scrollY, { immediate: true, force: true });
+		});
+
+		setupTerminalReveal();
+	}
+</script>
