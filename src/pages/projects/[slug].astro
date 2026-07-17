@@ -18,7 +18,7 @@ const otherProjects = projects.filter((item) => item.slug !== project.slug).slic
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content={`${project.name} — ${project.description}`} />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<title>{project.name} — Dilukshan Niranjan</title>
@@ -78,10 +78,10 @@ const otherProjects = projects.filter((item) => item.slug !== project.slug).slic
 	:root { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif; color: #111; background: #f7f7f3; font-synthesis: none; }
 	* { box-sizing: border-box; }
 	html { scroll-behavior: smooth; }
-	body { margin: 0; min-width: 320px; background: #f7f7f3; }
+	body { margin: 0; min-width: 320px; overflow-x: clip; background: #f7f7f3; }
 	a { color: inherit; text-decoration: none; }
 	.page-shell { width: 100%; margin: 0; background: #f7f7f3; }
-	.site-header { position: sticky; top: 0; z-index: 10; min-height: 90px; padding: 0 6.5%; display: flex; align-items: center; justify-content: space-between; gap: 28px; background: rgba(255,255,255,.82); backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%); box-shadow: 0 10px 26px rgba(17,17,17,.035); }
+	.site-header { position: sticky; top: 0; z-index: 10; min-height: 90px; padding: 0 6.5%; display: flex; align-items: center; justify-content: space-between; gap: 28px; border-bottom: 1px solid rgba(17,17,17,.08); background: radial-gradient(ellipse at 14% -80%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.58) 34%, transparent 62%), radial-gradient(ellipse at 86% 180%, rgba(214,224,232,.4) 0%, transparent 55%), linear-gradient(110deg, rgba(255,255,255,.74) 0%, rgba(238,243,247,.48) 52%, rgba(255,255,255,.72) 100%); backdrop-filter: blur(30px) saturate(190%) contrast(104%); -webkit-backdrop-filter: blur(30px) saturate(190%) contrast(104%); box-shadow: inset 0 1px 0 rgba(255,255,255,.96), inset 0 -1px 0 rgba(255,255,255,.45), 0 14px 34px rgba(17,17,17,.085); }
 	.wordmark { font-size: 20px; font-weight: 600; letter-spacing: -.08em; }
 	.wordmark span { color: #70706b; }
 	nav { display: flex; align-items: center; gap: 28px; margin: 0 auto; }
@@ -147,17 +147,19 @@ const otherProjects = projects.filter((item) => item.slug !== project.slug).slic
 	.email-link { display: inline-flex; align-items: center; gap: 20px; padding-bottom: 13px; border-bottom: 1px solid #777; font-size: clamp(22px, 2vw, 30px); letter-spacing: -.05em; }
 	.footer-links { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 28px; color: #a2a29c; font-size: 15px; }
 	@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition-duration: .01ms !important; } .more-card:hover { transform: none; } }
-	@media (prefers-reduced-transparency: reduce) { .site-header { background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 0 1px 0 #f0f0eb; } }
+	@media (prefers-reduced-transparency: reduce) { .site-header { border-bottom-color: #f0f0eb; background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; } }
 	@media (max-width: 760px) {
 		.site-header { min-height: 72px; padding: 0 7%; }
+		.header-button { width: 44px; min-width: 44px; height: 44px; padding: 0; display: grid; place-items: center; }
 		nav { gap: 12px; }
 		nav a:nth-child(n+2) { display: none; }
 		.project-hero { padding: 42px 9% 72px; }
 		.hero-grid, .project-notes, .footer { grid-template-columns: 1fr; gap: 54px; }
 		.hero-grid { padding: 82px 0 52px; }
-		h1 { font-size: clamp(62px, 17vw, 110px); }
+		h1 { max-width: 100%; overflow-wrap: anywhere; font-size: clamp(54px, 15vw, 92px); }
 		.hero-description { font-size: 16px; }
-		.project-cover { height: 70vw; }
+		.project-link { min-height: 46px; }
+		.project-cover { height: auto; aspect-ratio: 16 / 10; }
 		.project-notes, .more-projects { padding-left: 9%; padding-right: 9%; }
 		.note-copy { padding-top: 0; }
 		.project-facts { gap: 12px; }
@@ -165,9 +167,35 @@ const otherProjects = projects.filter((item) => item.slug !== project.slug).slic
 		.section-heading-row { display: block; }
 		.small-button { margin-top: 22px; }
 		.more-grid { grid-template-columns: 1fr; }
-		.more-card img { height: 54vw; }
-		.footer { min-height: 560px; padding: 112px 9% 84px; }
+		.more-card img { height: auto; aspect-ratio: 16 / 10; }
+		.footer { min-height: 0; padding: 96px 9% 76px; }
 		.footer-contact { align-self: start; }
 	}
-	@media (max-width: 500px) { nav { display: none; } }
+	@media (max-width: 500px) {
+		.site-header { min-height: 64px; padding: 0 clamp(20px, 6.5vw, 28px); }
+		nav { display: none; }
+		.project-hero { padding: 32px clamp(20px, 6.5vw, 28px) 64px; }
+		.back-link { min-height: 44px; align-items: center; }
+		.hero-grid { padding: 56px 0 42px; gap: 42px; }
+		h1 { font-size: clamp(50px, 15vw, 76px); }
+		.hero-description { margin-top: 22px; line-height: 1.65; }
+		.hero-meta strong { font-size: 22px; }
+		.project-links { display: grid !important; grid-template-columns: 1fr; }
+		.project-link { width: 100%; }
+		.project-cover { border-radius: 6px; }
+		.project-notes, .more-projects { padding: 76px clamp(20px, 6.5vw, 28px); }
+		.project-notes { gap: 40px; }
+		.project-notes h2, .more-projects h2 { font-size: clamp(38px, 12vw, 50px); text-wrap: balance; }
+		.note-copy p { font-size: 16px; line-height: 1.65; }
+		.stack-list { grid-template-columns: 1fr; }
+		.stack-name { white-space: normal; }
+		.small-button { min-height: 44px; align-items: center; }
+		.more-projects { padding-top: 0; }
+		.more-card > div { padding: 18px 18px 22px; }
+		.footer { padding: 84px clamp(20px, 6.5vw, 28px) 68px; gap: 48px; }
+		.footer h2 { font-size: clamp(42px, 13vw, 58px); }
+		.email-link { max-width: 100%; gap: 12px; font-size: clamp(19px, 5.8vw, 23px); }
+		.footer-links { gap: 14px 20px; line-height: 1.4; }
+	}
+	@media (max-width: 380px) { .project-facts { grid-template-columns: 1fr; gap: 20px; } }
 </style>
