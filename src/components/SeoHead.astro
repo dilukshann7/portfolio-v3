@@ -1,0 +1,62 @@
+---
+interface Props {
+	title: string;
+	description: string;
+	pathname: string;
+	image: string;
+	imageAlt: string;
+	type?: "website" | "article";
+	structuredData?: Record<string, unknown>;
+}
+
+const {
+	title,
+	description,
+	pathname,
+	image,
+	imageAlt,
+	type = "website",
+	structuredData,
+} = Astro.props;
+
+const site = Astro.site ?? new URL("https://dilukshan.dev");
+const canonicalURL = new URL(pathname, site);
+const imageURL = new URL(image, site);
+const serializedStructuredData = structuredData
+	? JSON.stringify(structuredData).replace(/</g, "\\u003c")
+	: undefined;
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content={description} />
+<meta name="author" content="Dilukshan Niranjan" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+<meta name="theme-color" content="#f7f7f3" />
+<meta name="generator" content={Astro.generator} />
+
+<title>{title}</title>
+<link rel="canonical" href={canonicalURL.href} />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="alternate icon" href="/favicon.ico" />
+
+<meta property="og:type" content={type} />
+<meta property="og:locale" content="en_US" />
+<meta property="og:site_name" content="Dilukshan Niranjan — Portfolio" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalURL.href} />
+<meta property="og:image" content={imageURL.href} />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:alt" content={imageAlt} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@dilukshann7" />
+<meta name="twitter:creator" content="@dilukshann7" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageURL.href} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+{serializedStructuredData && <script is:inline type="application/ld+json" set:html={serializedStructuredData} />}

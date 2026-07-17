@@ -1,6 +1,7 @@
 ---
 import { projects } from "../data/projects";
 import { certifications } from "../data/certifications";
+import SeoHead from "../components/SeoHead.astro";
 import TerminalTextReveal from "../components/TerminalTextReveal.astro";
 import { ClientRouter } from "astro:transitions";
 
@@ -27,16 +28,68 @@ const expertise = [
 	},
 ];
 
+const seoDescription = "Portfolio of Dilukshan Niranjan, a Sri Lanka-based full-stack developer and AI engineer building polished SaaS products, AI systems, and web apps.";
+const structuredData = {
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@type": "Person",
+			"@id": "https://dilukshan.dev/#person",
+			name: "Dilukshan Niranjan",
+			url: "https://dilukshan.dev/",
+			email: "mailto:info@dilukshan.dev",
+			jobTitle: ["Full-Stack Developer", "AI Engineer", "UI/UX Designer"],
+			description: seoDescription,
+			address: {
+				"@type": "PostalAddress",
+				addressLocality: "Colombo",
+				addressCountry: "LK",
+			},
+			knowsAbout: ["Full-stack development", "Generative AI", "SaaS development", "UI/UX design", "Data engineering", "Developer tooling"],
+			sameAs: [
+				"https://github.com/dilukshann7",
+				"https://www.linkedin.com/in/dilukshann7",
+				"https://x.com/dilukshann7",
+				"https://instagram.com/dilukshan.dev",
+				"https://www.behance.net/Dilukshan/services",
+				"https://www.pinterest.com/dilukshandev/",
+			],
+		},
+		{
+			"@type": "WebSite",
+			"@id": "https://dilukshan.dev/#website",
+			url: "https://dilukshan.dev/",
+			name: "Dilukshan Niranjan — Portfolio",
+			description: seoDescription,
+			inLanguage: "en",
+			creator: { "@id": "https://dilukshan.dev/#person" },
+		},
+		{
+			"@type": "ProfilePage",
+			"@id": "https://dilukshan.dev/#webpage",
+			url: "https://dilukshan.dev/",
+			name: "Dilukshan Niranjan | Full-Stack Developer & AI Engineer",
+			description: seoDescription,
+			inLanguage: "en",
+			isPartOf: { "@id": "https://dilukshan.dev/#website" },
+			mainEntity: { "@id": "https://dilukshan.dev/#person" },
+		},
+	],
+};
+
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content="Dilukshan Niranjan — Fullstack Developer and AI Engineer based in Sri Lanka." />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<title>Dilukshan Niranjan — Fullstack Developer & AI Engineer</title>
+		<SeoHead
+			title="Dilukshan Niranjan | Full-Stack Developer & AI Engineer"
+			description={seoDescription}
+			pathname="/"
+			image="/projects/legisdex.jpg"
+			imageAlt="LegisDex, a featured AI engineering project by Dilukshan Niranjan"
+			structuredData={structuredData}
+		/>
 		<ClientRouter />
 	</head>
 	<body>
@@ -60,11 +113,11 @@ const expertise = [
 			<main id="top">
 				<section class="hero is-visible" aria-labelledby="intro-title" data-reveal data-stagger>
 					<div class="hero-name">
-						<h1 id="intro-title">Hello! I’m Dilukshan Niranjan</h1>
+						<h1 id="intro-title">Dilukshan Niranjan</h1>
 					</div>
 					<div class="hero-copy">
-		<p class="eyebrow">Fullstack Developer, AI Engineer &amp; UI/UX Designer</p>
-						<h2>A developer with a sense of design.</h2>
+		<p class="eyebrow">Full-Stack Developer, AI Engineer &amp; UI/UX Designer</p>
+						<h2>Full-stack products with a sense of design.</h2>
 						<p class="hero-description">I design and build AI-assisted SaaS products, internal tools, and performance-focused web apps — bringing product thinking, UI/UX, and engineering into the same workflow.</p>
 						<div class="actions">
 							<a class="button dark" href="mailto:info@dilukshan.dev">Start a project <span>↗</span></a>
@@ -115,7 +168,7 @@ const expertise = [
 								<h3>{project.name}</h3>
 								<p>{project.description}</p>
 								<span class="row-arrow">↗</span>
-								<span class="project-hover-preview" aria-hidden="true"><img src={project.image} alt="" loading="lazy" /></span>
+								<span class="project-hover-preview" aria-hidden="true"><img src={project.image} alt="" width="1920" height="1279" loading="lazy" decoding="async" /></span>
 							</a>
 						))}
 					</div>
@@ -171,11 +224,11 @@ const expertise = [
 	const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	const revealItems = document.querySelectorAll("[data-reveal]");
 	const staggerGroups = document.querySelectorAll("[data-stagger]");
-	const progressBar = document.querySelector(".scroll-progress span");
+	const progressBar = document.querySelector<HTMLElement>(".scroll-progress span");
 
 	staggerGroups.forEach((group) => {
 		Array.from(group.children).forEach((child, index) => {
-			child.style.setProperty("--stagger-index", String(index));
+			if (child instanceof HTMLElement) child.style.setProperty("--stagger-index", String(index));
 		});
 	});
 
@@ -210,7 +263,7 @@ const expertise = [
 	updateScrollProgress();
 
 	if (!reduceMotion && window.matchMedia("(pointer: fine)").matches) {
-		for (const target of document.querySelectorAll(".button, .small-button, .header-button, .social-rail a")) {
+		for (const target of document.querySelectorAll<HTMLElement>(".button, .small-button, .header-button, .social-rail a")) {
 			let x = 0;
 			let y = 0;
 			let targetX = 0;
@@ -226,7 +279,7 @@ const expertise = [
 				else frame = 0;
 			};
 
-			target.addEventListener("pointermove", (event) => {
+			target.addEventListener("pointermove", (event: PointerEvent) => {
 				const rect = target.getBoundingClientRect();
 				targetX = Math.max(-4, Math.min(4, (event.clientX - (rect.left + rect.width / 2)) * 0.16));
 				targetY = Math.max(-4, Math.min(4, (event.clientY - (rect.top + rect.height / 2)) * 0.16));
