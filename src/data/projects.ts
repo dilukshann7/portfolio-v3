@@ -1,3 +1,14 @@
+export type ProjectTechnology = {
+	name: string;
+	icon: string;
+};
+
+export type ProjectLink = {
+	label: string;
+	href: string;
+	type: "live" | "repository";
+};
+
 export type Project = {
 	slug: string;
 	year: string;
@@ -9,10 +20,10 @@ export type Project = {
 	role: string;
 	platform: string;
 	focus: string;
-	stack: string[];
+	stack: ProjectTechnology[];
 	highlights: string[];
 	image: string;
-	github: string;
+	links: ProjectLink[];
 };
 
 export const projects: Project[] = [
@@ -27,10 +38,18 @@ export const projects: Project[] = [
 		role: "Full-stack product + AI engineering",
 		platform: "Web application",
 		focus: "Contract intelligence",
-		stack: ["AI workflows", "Retrieval", "Citations", "Product UX"],
+		stack: [
+			{ name: "Next.js", icon: "/tech/nextjs.svg" },
+			{ name: "OpenAI", icon: "/tech/openai.svg" },
+			{ name: "PostgreSQL", icon: "/tech/postgresql.svg" },
+			{ name: "Drizzle ORM", icon: "/tech/drizzle.svg" },
+			{ name: "Stripe", icon: "/tech/stripe.svg" },
+			{ name: "Payload CMS", icon: "/tech/payloadcms.svg" },
+			{ name: "Three.js", icon: "/tech/three.svg" },
+		],
 		highlights: ["FIDIC contract assistance", "Grounded answers", "Research workflows"],
 		image: "/projects/legisdex.jpg",
-		github: "https://github.com/dilukshann7?tab=repositories",
+		links: [{ label: "Open live product", href: "https://legisdex.com/", type: "live" }],
 	},
 	{
 		slug: "noxhd-ui",
@@ -43,10 +62,16 @@ export const projects: Project[] = [
 		role: "UI system + frontend engineering",
 		platform: "Next.js",
 		focus: "Reusable interface design",
-		stack: ["Next.js", "React", "Design systems", "UI/UX"],
+		stack: [
+			{ name: "Next.js", icon: "/tech/nextjs.svg" },
+			{ name: "TypeScript", icon: "/tech/typescript.svg" },
+			{ name: "Tailwind CSS", icon: "/tech/tailwind.svg" },
+			{ name: "Framer Motion", icon: "/tech/motion.svg" },
+			{ name: "GSAP", icon: "/tech/gsap.svg" },
+		],
 		highlights: ["500+ developers", "Reusable components", "Frontend polish"],
 		image: "/projects/noxhdui.jpg",
-		github: "https://github.com/dilukshann7?tab=repositories",
+		links: [{ label: "View repository", href: "https://github.com/Nox-HD/ui", type: "repository" }],
 	},
 	{
 		slug: "termicord",
@@ -59,10 +84,16 @@ export const projects: Project[] = [
 		role: "Developer tooling + interaction design",
 		platform: "Terminal",
 		focus: "Discord attachment workflows",
-		stack: ["Terminal UI", "Discord", "Developer tooling", "Interaction design"],
+		stack: [
+			{ name: "Bun", icon: "/tech/bun.svg" },
+			{ name: "TypeScript", icon: "/tech/typescript.svg" },
+			{ name: "OpenTUI", icon: "/tech/opentui.svg" },
+			{ name: "Zig", icon: "/tech/zig.svg" },
+			{ name: "Discord API", icon: "/tech/discord.svg" },
+		],
 		highlights: ["Terminal-native interface", "Attachment downloads", "Focused workflow"],
 		image: "/projects/termicord.jpg",
-		github: "https://github.com/dilukshann7?tab=repositories",
+		links: [{ label: "View repository", href: "https://github.com/dilukshann7/termicord", type: "repository" }],
 	},
 	{
 		slug: "census-management-system",
@@ -75,9 +106,19 @@ export const projects: Project[] = [
 		role: "Full-stack application + workflow design",
 		platform: "SvelteKit",
 		focus: "Census data operations",
-		stack: ["SvelteKit", "Data collection", "Admin review", "Workflow UX"],
+		stack: [
+			{ name: "SvelteKit", icon: "/tech/svelte.svg" },
+			{ name: "Tailwind CSS", icon: "/tech/tailwind.svg" },
+			{ name: "Drizzle ORM", icon: "/tech/drizzle.svg" },
+			{ name: "PostgreSQL", icon: "/tech/postgresql.svg" },
+			{ name: "Better Auth", icon: "/tech/betterauth.svg" },
+			{ name: "Zod", icon: "/tech/zod.svg" },
+		],
 		highlights: ["Submission workflows", "Admin review", "Local government system"],
 		image: "/projects/census.jpg",
-		github: "https://github.com/dilukshann7?tab=repositories",
+		links: [
+			{ label: "Open live app", href: "https://census-lk.vercel.app/", type: "live" },
+			{ label: "View repository", href: "https://github.com/dilukshann7/census-ms", type: "repository" },
+		],
 	},
 ];
