@@ -14,12 +14,24 @@ export function getStaticPaths() {
 const { project } = Astro.props;
 const otherProjects = projects.filter((item) => item.slug !== project.slug).slice(0, 3);
 const projectUrl = `https://dilukshan.dev/projects/${project.slug}/`;
-const seoDescription = project.description.length < 80
-	? `${project.description} Explore the role, technical stack, implementation choices, and key project outcomes.`
-	: `${project.description} Explore the role, stack, implementation, and key outcomes.`;
 const structuredData = {
 	"@context": "https://schema.org",
 	"@graph": [
+		{
+			"@type": "WebPage",
+			"@id": `${projectUrl}#webpage`,
+			url: projectUrl,
+			name: project.seoTitle,
+			description: project.seoDescription,
+			inLanguage: "en",
+			isPartOf: { "@id": "https://dilukshan.dev/#website" },
+			mainEntity: { "@id": `${projectUrl}#project` },
+			breadcrumb: { "@id": `${projectUrl}#breadcrumb` },
+			primaryImageOfPage: {
+				"@type": "ImageObject",
+				url: `https://dilukshan.dev${project.image}`,
+			},
+		},
 		{
 			"@type": "CreativeWork",
 			"@id": `${projectUrl}#project`,
@@ -29,12 +41,19 @@ const structuredData = {
 			image: `https://dilukshan.dev${project.image}`,
 			genre: project.system,
 			keywords: project.stack.map((technology) => technology.name),
-			creator: { "@id": "https://dilukshan.dev/#person" },
+			creator: {
+				"@type": "Person",
+				"@id": "https://dilukshan.dev/#person",
+				name: "Dilukshan Niranjan",
+				url: "https://dilukshan.dev/",
+			},
+			mainEntityOfPage: { "@id": `${projectUrl}#webpage` },
 			isPartOf: { "@id": "https://dilukshan.dev/projects/#webpage" },
 			sameAs: project.links.map((link) => link.href),
 		},
 		{
 			"@type": "BreadcrumbList",
+			"@id": `${projectUrl}#breadcrumb`,
 			itemListElement: [
 				{ "@type": "ListItem", position: 1, name: "Home", item: "https://dilukshan.dev/" },
 				{ "@type": "ListItem", position: 2, name: "Projects", item: "https://dilukshan.dev/projects/" },
@@ -49,8 +68,8 @@ const structuredData = {
 <html lang="en">
 	<head>
 		<SeoHead
-			title={`${project.name} Case Study | Dilukshan Niranjan`}
-			description={seoDescription}
+			title={project.seoTitle}
+			description={project.seoDescription}
 			pathname={`/projects/${project.slug}/`}
 			image={project.image}
 			imageAlt={`${project.name} project by Dilukshan Niranjan`}

@@ -15,9 +15,12 @@ const structuredData = {
 			name: "Software Projects & Case Studies | Dilukshan Niranjan",
 			description: seoDescription,
 			inLanguage: "en",
+			isPartOf: { "@id": "https://dilukshan.dev/#website" },
+			breadcrumb: { "@id": "https://dilukshan.dev/projects/#breadcrumb" },
 			about: { "@id": "https://dilukshan.dev/#person" },
 			mainEntity: {
 				"@type": "ItemList",
+				numberOfItems: projects.length,
 				itemListElement: projects.map((project, index) => ({
 					"@type": "ListItem",
 					position: index + 1,
@@ -28,6 +31,7 @@ const structuredData = {
 		},
 		{
 			"@type": "BreadcrumbList",
+			"@id": "https://dilukshan.dev/projects/#breadcrumb",
 			itemListElement: [
 				{ "@type": "ListItem", position: 1, name: "Home", item: "https://dilukshan.dev/" },
 				{ "@type": "ListItem", position: 2, name: "Projects", item: "https://dilukshan.dev/projects/" },
@@ -57,7 +61,7 @@ const structuredData = {
 				<nav aria-label="Primary navigation">
 					<a href="/#expertise">Expertise</a>
 					<a href="/projects/" aria-current="page">Projects</a>
-					<a href="/#certifications">Certifications</a>
+					<a href="/certifications/">Certifications</a>
 					<a href="/#contact">Contact</a>
 				</nav>
 				<a class="header-button dark" href="/#contact">＋</a>

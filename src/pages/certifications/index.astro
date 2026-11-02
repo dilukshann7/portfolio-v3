@@ -15,9 +15,12 @@ const structuredData = {
 			name: "Developer & AI Certifications | Dilukshan Niranjan",
 			description: seoDescription,
 			inLanguage: "en",
+			isPartOf: { "@id": "https://dilukshan.dev/#website" },
+			breadcrumb: { "@id": "https://dilukshan.dev/certifications/#breadcrumb" },
 			about: { "@id": "https://dilukshan.dev/#person" },
 			mainEntity: {
 				"@type": "ItemList",
+				numberOfItems: certifications.length,
 				itemListElement: certifications.map((certification, index) => ({
 					"@type": "ListItem",
 					position: index + 1,
@@ -40,6 +43,7 @@ const structuredData = {
 		},
 		{
 			"@type": "BreadcrumbList",
+			"@id": "https://dilukshan.dev/certifications/#breadcrumb",
 			itemListElement: [
 				{ "@type": "ListItem", position: 1, name: "Home", item: "https://dilukshan.dev/" },
 				{ "@type": "ListItem", position: 2, name: "Certifications", item: "https://dilukshan.dev/certifications/" },

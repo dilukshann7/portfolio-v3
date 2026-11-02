@@ -15,6 +15,8 @@ export type Project = {
 	status: string;
 	name: string;
 	description: string;
+	seoTitle: string;
+	seoDescription: string;
 	details: string;
 	system: string;
 	role: string;
@@ -33,6 +35,8 @@ export const projects: Project[] = [
 		status: "Live",
 		name: "LegisDex",
 		description: "An AI-powered FIDIC contract assistant for architects, engineers, and quantity surveyors.",
+		seoTitle: "LegisDex: FIDIC AI Assistant | Dilukshan Niranjan",
+		seoDescription: "See how Dilukshan Niranjan built LegisDex, an AI-powered FIDIC contract assistant with grounded retrieval, cited answers, and contract research workflows.",
 		details: "I built LegisDex to make FIDIC contract research and review easier. It uses grounded retrieval so users can check where an answer came from.",
 		system: "Agentic RAG SaaS",
 		role: "Full-stack product + AI engineering",
@@ -57,6 +61,8 @@ export const projects: Project[] = [
 		status: "Live",
 		name: "NoxHD UI",
 		description: "A beautifully designed UI library for Next.js used by 500+ developers.",
+		seoTitle: "NoxHD UI: Next.js Component Library | Dilukshan Niranjan",
+		seoDescription: "Explore NoxHD UI, a Next.js component library by Dilukshan Niranjan, with reusable components, TypeScript, Tailwind CSS, and polished frontend interactions.",
 		details: "I designed and built NoxHD UI as a reusable component system for Next.js. I focused on useful components, clear visual rules, and polished interactions.",
 		system: "Next.js UI library",
 		role: "UI system + frontend engineering",
@@ -79,6 +85,8 @@ export const projects: Project[] = [
 		status: "Completed",
 		name: "termicord",
 		description: "A beautiful, terminal-native Discord attachment downloader for focused workflows.",
+		seoTitle: "termicord: Discord Attachment Downloader | Dilukshan Niranjan",
+		seoDescription: "Explore termicord, a terminal-native Discord attachment downloader by Dilukshan Niranjan, built with Bun, TypeScript, and OpenTUI for focused workflows.",
 		details: "I built termicord as a terminal tool for downloading Discord attachments. I kept the interface direct and readable without adding unnecessary UI.",
 		system: "Terminal-native TUI",
 		role: "Developer tooling + interaction design",
@@ -101,6 +109,8 @@ export const projects: Project[] = [
 		status: "Live",
 		name: "Census Management System",
 		description: "A SvelteKit-based census data collection and admin review system built for local government.",
+		seoTitle: "SvelteKit Census Management System | Dilukshan Niranjan",
+		seoDescription: "See how Dilukshan Niranjan built a SvelteKit census management system with PostgreSQL, field data collection, administrative review, and approval workflows.",
 		details: "I built this system to connect field data collection with administrative review. It handles submission, checking, approval, and management in one workflow.",
 		system: "Submission to approval",
 		role: "Full-stack application + workflow design",
